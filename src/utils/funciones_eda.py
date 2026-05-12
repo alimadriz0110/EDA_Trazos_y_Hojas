@@ -190,3 +190,93 @@ def pinta_distribucion_categoricas(df, columnas_categoricas, relativa=False, mos
     plt.tight_layout()
     plt.show()
 #------------------------
+
+#------------------------
+def grafico_dispersion_con_correlacion(df, columna_x, columna_y, tamano_puntos=50, mostrar_correlacion=False):
+    """
+    Crea un diagrama de dispersión entre dos columnas y opcionalmente muestra la correlación.
+
+    Args:
+    df (pandas.DataFrame): DataFrame que contiene los datos.
+    columna_x (str): Nombre de la columna para el eje X.
+    columna_y (str): Nombre de la columna para el eje Y.
+    tamano_puntos (int, opcional): Tamaño de los puntos en el gráfico. Por defecto es 50.
+    mostrar_correlacion (bool, opcional): Si es True, muestra la correlación en el gráfico. Por defecto es False.
+    """
+
+    plt.figure(figsize=(10, 6))
+    sns.scatterplot(data=df, x=columna_x, y=columna_y, s=tamano_puntos)
+
+    if mostrar_correlacion:
+        correlacion = df[[columna_x, columna_y]].corr().iloc[0, 1]
+        plt.title(f'Diagrama de Dispersión con Correlación: {correlacion:.2f}')
+    else:
+        plt.title('Diagrama de Dispersión')
+
+    plt.xlabel(columna_x)
+    plt.ylabel(columna_y)
+    plt.grid(True)
+    plt.show()
+#------------------------
+#------------------------
+def plot_categorical_numerical_relationship(df, categorical_col, numerical_col, show_values=False, measure='mean'):
+    # Calcula la medida de tendencia central (mean o median)
+    if measure == 'median':
+        grouped_data = df.groupby(categorical_col)[numerical_col].median()
+    else:
+        # Por defecto, usa la media
+        grouped_data = df.groupby(categorical_col)[numerical_col].mean()
+
+    # Ordena los valores
+    grouped_data = grouped_data.sort_values(ascending=False)
+
+    # Si hay más de 5 categorías, las divide en grupos de 5
+    if grouped_data.shape[0] > 5:
+        unique_categories = grouped_data.index.unique()
+        num_plots = int(np.ceil(len(unique_categories) / 5))
+
+        for i in range(num_plots):
+            # Selecciona un subconjunto de categorías para cada gráfico
+            categories_subset = unique_categories[i * 5:(i + 1) * 5]
+            data_subset = grouped_data.loc[categories_subset]
+
+            # Crea el gráfico
+            plt.figure(figsize=(10, 6))
+            ax = sns.barplot(x=data_subset.index, y=data_subset.values)
+
+            # Añade títulos y etiquetas
+            plt.title(f'Relación entre {categorical_col} y {numerical_col} - Grupo {i + 1}')
+            plt.xlabel(categorical_col)
+            plt.ylabel(f'{measure.capitalize()} de {numerical_col}')
+            plt.xticks(rotation=45)
+
+            # Mostrar valores en el gráfico
+            if show_values:
+                for p in ax.patches:
+                    ax.annotate(f'{p.get_height():.2f}', (p.get_x() + p.get_width() / 2., p.get_height()),
+                                ha='center', va='center', fontsize=10, color='black', xytext=(0, 5),
+                                textcoords='offset points')
+
+            # Muestra el gráfico
+            plt.show()
+    else:
+        # Crea el gráfico para menos de 5 categorías
+        plt.figure(figsize=(10, 6))
+        ax = sns.barplot(x=grouped_data.index, y=grouped_data.values)
+
+        # Añade títulos y etiquetas
+        plt.title(f'Relación entre {categorical_col} y {numerical_col}')
+        plt.xlabel(categorical_col)
+        plt.ylabel(f'{measure.capitalize()} de {numerical_col}')
+        plt.xticks(rotation=45)
+
+        # Mostrar valores en el gráfico
+        if show_values:
+            for p in ax.patches:
+                ax.annotate(f'{p.get_height():.2f}', (p.get_x() + p.get_width() / 2., p.get_height()),
+                            ha='center', va='center', fontsize=10, color='black', xytext=(0, 5),
+                            textcoords='offset points')
+
+        # Muestra el gráfico
+        plt.show()
+#------------------------
