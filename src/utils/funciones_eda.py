@@ -126,3 +126,67 @@ def plot_categorical_relationship_fin(df, cat_col1, cat_col2, relative_freq=Fals
         # Muestra el gráfico
         plt.show()
 #-----------------------
+
+#-----------------------
+def plot_combined_graphs(df, columns, whisker_width=1.5, bins = None):
+    num_cols = len(columns)
+    if num_cols:
+        
+        fig, axes = plt.subplots(num_cols, 2, figsize=(12, 5 * num_cols))
+        print(axes.shape)
+
+        for i, column in enumerate(columns):
+            if df[column].dtype in ['int64', 'float64']:
+                # Histograma y KDE
+                sns.histplot(df[column], kde=True, ax=axes[i,0] if num_cols > 1 else axes[0], bins= "auto" if not bins else bins)
+                if num_cols > 1:
+                    axes[i,0].set_title(f'Histograma y KDE de {column}')
+                else:
+                    axes[0].set_title(f'Histograma y KDE de {column}')
+
+                # Boxplot
+                sns.boxplot(x=df[column], ax=axes[i,1] if num_cols > 1 else axes[1], whis=whisker_width)
+                if num_cols > 1:
+                    axes[i,1].set_title(f'Boxplot de {column}')
+                else:
+                    axes[1].set_title(f'Boxplot de {column}')
+
+        plt.tight_layout()
+        plt.show()
+#-----------------------
+#------------------------
+def pinta_distribucion_categoricas(df, columnas_categoricas, relativa=False, mostrar_valores=False):
+    num_columnas = len(columnas_categoricas)
+    num_filas = (num_columnas // 2) + (num_columnas % 2)
+
+    fig, axes = plt.subplots(num_filas, 2, figsize=(15, 5 * num_filas))
+    axes = axes.flatten() 
+
+    for i, col in enumerate(columnas_categoricas):
+        ax = axes[i]
+        if relativa:
+            total = df[col].value_counts().sum()
+            serie = df[col].value_counts().apply(lambda x: x / total)
+            sns.barplot(x=serie.index, y=serie, ax=ax, palette='viridis', hue = serie.index, legend = False)
+            ax.set_ylabel('Frecuencia Relativa')
+        else:
+            serie = df[col].value_counts()
+            sns.barplot(x=serie.index, y=serie, ax=ax, palette='viridis', hue = serie.index, legend = False)
+            ax.set_ylabel('Frecuencia')
+
+        ax.set_title(f'Distribución de {col}')
+        ax.set_xlabel('')
+        ax.tick_params(axis='x', rotation=45)
+
+        if mostrar_valores:
+            for p in ax.patches:
+                height = p.get_height()
+                ax.annotate(f'{height:.2f}', (p.get_x() + p.get_width() / 2., height), 
+                            ha='center', va='center', xytext=(0, 9), textcoords='offset points')
+
+    for j in range(i + 1, num_filas * 2):
+        axes[j].axis('off')
+
+    plt.tight_layout()
+    plt.show()
+#------------------------
