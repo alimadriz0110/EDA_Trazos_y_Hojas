@@ -86,21 +86,13 @@ git clone https://github.com/alimadriz0110/EDA_Trazos_y_Hojas.git
 cd EDA_Trazos_y_Hojas
 ```
 
-**2. Crear un entorno virtual (recomendado)**
-
-```bash
-python -m venv venv
-source venv/bin/activate        # macOS / Linux
-venv\Scripts\activate           # Windows
-```
-
-**3. Instalar las dependencias**
+**2. Instalar las dependencias**
 
 ```bash
 pip install pandas matplotlib seaborn jupyter
 ```
 
-**4. Lanzar el notebook**
+**3. Lanzar el notebook**
 
 ```bash
 jupyter notebook main.ipynb
