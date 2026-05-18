@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="src/img/logo.png" alt="Trazos y Hojas" width="220"/>
+  <img src="src/img/logo.png" alt="Trazos y Hojas" width="300"/>
 </p>
 
 <h1 align="center">Gestión Inteligente de Compras — EDA Trazos y Hojas</h1>
